@@ -3,8 +3,6 @@
 
 脚本如下
 
-
-
 #!/bin/bash
 LIMIT=30     #这边可以自定义限制次数
 LOGFILE="/var/log/block_ssh.log"     #日志路径
