@@ -1,4 +1,5 @@
-\#!/bin/bash
+脚本如下
+#!/bin/bash
 
 LIMIT=30   #这边可以自定义限制次数
 
@@ -10,7 +11,7 @@ BLOCK_IP=$(grep "$TIME" /var/log/secure|grep Failed|awk '{print $(NF-3)}'|sort|u
 
 #测试
 
-\#BLOCK_IP=`cat /root/ip_list`
+#BLOCK_IP=`cat /root/ip_list`
 
 for i in $BLOCK_IP
 
@@ -31,3 +32,4 @@ do
    fi
 
 done
+
