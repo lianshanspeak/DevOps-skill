@@ -1,0 +1,57 @@
+---
+- hosts: test1
+  remote_user: root
+  gather_facts: yes
+  tasks:
+    - name: "检查/etc/hosts文件"
+      shell: cat /etc/hosts
+      ignore_errors: True
+      register: result
+    - name: "如果没有加入的话，就加入"
+      lineinfile:
+        path: /etc/hosts
+        state: present
+        line: "{{ item.ip}}  {{ item.name }}"
+      with_items:
+      - { ip: "{{ ansible_host }}" , name: "{{ ansible_host }}_db" }
+      when: result.stdout.find('db') == -1
+
+    - name: "配置英文环境"
+      lineinfile:
+        path: ~/.bash_profile
+        regexp: "^en_US"
+        line: export LANG=en_US
+    - name: "配置资源限制参数"
+      lineinfile:
+        path: /etc/security/limits.conf
+        regexp: "^65535"
+        line: "{{item}}"
+      with_items:
+        - "* soft nproc 65535"
+        - "* hard nproc 65535"
+        - "* soft nofile 65535"
+        - "* hard nofile 65535"
+        - "* soft stack 65535"
+        - "* hard stack 65535"
+    - name: "修改文件"
+      blockinfile:
+        path: /etc/security/limits.d/90-nproc.conf
+        block: "* - nproc 65535"
+        marker: "#{mark} test"
+        create: yes
+    - name: "关闭防火墙"
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: "^SELINUX="
+        line: "SELINUX=disabled"
+    - name: "临时关闭防火墙"
+      shell: "setenforce 0 && systemctl stop firewalld && systemctl disable firewalld"
+    - name: "控制资源分配限制"
+      lineinfile:
+        path: /etc/pam.d/login
+        regexp: "pam_limits.so$"
+        line: "session required pam_limits.so"
+    - name: "关闭NUMA功能"
+      shell: echo "numa=off" > /etc/grub.conf
+    - name: "IO调度算法与IO优化"
+      
