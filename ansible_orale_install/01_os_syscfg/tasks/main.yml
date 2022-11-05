@@ -1,0 +1,24 @@
+---
+- name: Reconfigure the host name
+  lineinfile:
+    path: /etc/hosts
+    state: absent
+    regexpp: "{{ item.ip}}"
+  with_items:
+    - { ip: "{{ inventory_hostname}}"}
+- name: add new hosts
+  lineinfile:
+    path: /etc/hosts
+    state: present
+    line: "{{ item.hostname item.ip}}"
+  with_items:
+    - {hostname: "{{ ansible_hostname }}", ip: "{{ inventory_hostname}}"}
+
+- name: Manage entries in sysctl.conf
+  sysctl:
+    name: "{{item.name}}"
+    value: "{{item.value}}"
+    state: present
+    reload: yes
+  with_items:
+    - { name: "{{kernel.shmall}}",value: "{{ansible_metotal_mb * 1024 * 1024 -1}}"}
