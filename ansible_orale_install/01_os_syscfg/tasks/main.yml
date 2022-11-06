@@ -21,4 +21,35 @@
     state: present
     reload: yes
   with_items:
-    - { name: "{{kernel.shmall}}",value: "{{ansible_metotal_mb * 1024 * 1024 -1}}"}
+    - { name: "{{kernel.shmall}}",value: "{{ansible_memtotal_mb * 1024 * 1024 -1}}"}
+    - { name: "{{kernel.shmmax}}",value: "{{ ansible_memtotal_mb * 1024 *1024 -1}}"}
+    - { name: "{{kernel.shmmni}}",value: 4096}
+    - { name: "kernel.sem" , value: "250 32000 100 240"   }
+    - { name: "kernel.randomize_va_space" , value: 0  }
+    - { name: "fs.file-max" , value: 6815744  }
+    - { name: "fs.aio-max-nr" , value: 1048576  }
+    - { name: "net.core.rmem_default" , value: 262144  }
+    - { name: "net.core.rmem_max" , value: 4194304  }
+    - { name: "net.core.wmem_default" , value: 262144  }
+    - { name: "net.core.wmem_max" , value: 1048576  }
+
+- name: disable SELinux
+  selinux:
+    state: disabled
+
+- name: disable firewalld,avahi-deamon
+  systemd: 
+    name: "{{item.name}}"
+    state: "{{item.state}}"
+    enable: "{{item.enable}}"
+  with_items:
+    - { name: "{{firewalld}}", state: "{{stopped}}",enable: "{{no}}"}
+
+
+- name: 'set PemoveIPC=no'
+  lineinfile:
+    path: /etc/systemd/logind.conf
+    state: present
+    line: "RemoveIPC=no"
+
+- name: "set "
