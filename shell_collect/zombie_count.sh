@@ -4,7 +4,7 @@ ALL_PROCESS=$(ls /proc/ |egrep '[0-9]+')
 running_count=0
 stop_count=0
 sleeping_count=0
-zombile_count=0
+zombie_count=0
 
 for pid in ${ALL_PROCESS[*]}
 do
@@ -20,16 +20,16 @@ do
       sleeping_count=$((sleeping_count+1))
     ;;
     Z)
-      zombile_count=$((zombile_count+1))
-      echo "$pid" zombile.txt
+      zombie_count=$((zombie_count+1))
+      echo "$pid" >> zombie.txt
       kill -9 "$pid"
     ;;
   esac
 done
 
-
-echo 1
-echo -e "total: $((running_count+stop_count+sleeping_count+zombile_count))\n
-         running: $((running_count))\n
-         stoped: $((stoped_count))\n
-         zombile: $((zombile_count))"
+echo -e "total: $((stop_count+sleeping_count+zombie_count))"
+#echo -e "running: $((running_count))\nstoped: $((stoped_count))\nombie: $((zombie_count))"
+#echo -e "total: $((running_count+stop_count+sleeping_count+zombie_count))\n
+#         running: $((running_count))\n
+#         stoped: $((stoped_count))\n
+#         zombie: $((zombie_count))"
