@@ -7,7 +7,7 @@ SVN_BACKUP_C="/bin/svnadmin_hotcopy"
 SVN_LOOK_C="/bin/svnlook_youngset"
 TODAY=$(date +'%F')
 cd $SRC_PATH
-ALL_REPOS=$(find ./ -maxdepth 1 -type d | -name 'httpd' -a | -name 'bak' |tr -d './')
+ALL_REPOS=$(find ./ -maxdepth 1 -type d ! -name 'httpd' -a ! -name 'bak' |tr -d './')
 
 #创建备份目录，备份脚本日志目录
 test -d $DST_PATH || mkdir -p $DST_PATH
